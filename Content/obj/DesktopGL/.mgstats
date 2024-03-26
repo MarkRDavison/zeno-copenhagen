@@ -1,0 +1,7 @@
+Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
+"F:/Workspace/Github/zeno-copenhagen/Content/Scripts/Base/initializeCommands.lua","F:\Workspace\Github\zeno-copenhagen\Content\bin\DesktopGL\Scripts/Base/initializeCommands.lua","CopyItem","File",1059,1059,0.0009513
+"F:/Workspace/Github/zeno-copenhagen/Content/Scripts/Base/prototypes.lua","F:\Workspace\Github\zeno-copenhagen\Content\bin\DesktopGL\Scripts/Base/prototypes.lua","CopyItem","File",4804,4804,0.0004586
+"F:/Workspace/Github/zeno-copenhagen/Content/Scripts/Base/resources.lua","F:\Workspace\Github\zeno-copenhagen\Content\bin\DesktopGL\Scripts/Base/resources.lua","CopyItem","File",143,143,0.0003601
+"F:/Workspace/Github/zeno-copenhagen/Content/Scripts/config.lua","F:\Workspace\Github\zeno-copenhagen\Content\bin\DesktopGL\Scripts/config.lua","CopyItem","File",116,116,0.0004613
+"F:/Workspace/Github/zeno-copenhagen/Content/Textures/ball.png","F:/Workspace/Github/zeno-copenhagen/Content/bin/DesktopGL/Textures/ball.xnb","TextureProcessor","Texture2DContent",8368,16469,0.0953508
+"F:/Workspace/Github/zeno-copenhagen/Content/Textures/tile_sprite_sheet.png","F:/Workspace/Github/zeno-copenhagen/Content/bin/DesktopGL/Textures/tile_sprite_sheet.xnb","TextureProcessor","Texture2DContent",22173,4194389,0.1656243
