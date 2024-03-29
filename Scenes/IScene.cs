@@ -1,6 +1,6 @@
-﻿namespace zeno_copenhagen.Views;
+﻿namespace zeno_copenhagen.Scenes;
 
-public interface IView
+public interface IScene
 {
     void Initialise();
     void Update(TimeSpan delta);

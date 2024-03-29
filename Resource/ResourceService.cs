@@ -2,19 +2,26 @@
 
 public class ResourceService : IResourceService
 {
-    private readonly GraphicsDevice _graphicsDevice;
+    private readonly GraphicsDeviceManager _graphicsDeviceManager;
     private readonly IDictionary<string, IDictionary<string, IDisposable>> _resources;
 
-    public ResourceService(GraphicsDevice graphicsDevice)
+    public ResourceService(GraphicsDeviceManager graphicsDeviceManager)
     {
-        _graphicsDevice = graphicsDevice;
-        _resources = new Dictionary<string, IDictionary<string, IDisposable>>();
-        _resources.Add(nameof(Texture2D), new Dictionary<string, IDisposable>());
+        _graphicsDeviceManager = graphicsDeviceManager;
+        _resources = new Dictionary<string, IDictionary<string, IDisposable>>
+        {
+            { nameof(Texture2D), new Dictionary<string, IDisposable>() }
+        };
+    }
+
+    public SpriteBatch CreateSpriteBatch()
+    {
+        return new SpriteBatch(_graphicsDeviceManager.GraphicsDevice);
     }
 
     public void AddTexture2D(string name, string path)
     {
-        AddTexture2D(name, Texture2D.FromFile(_graphicsDevice, path));
+        AddTexture2D(name, Texture2D.FromFile(_graphicsDeviceManager.GraphicsDevice, path));
     }
 
     public void AddTexture2D(string name, Texture2D texture)

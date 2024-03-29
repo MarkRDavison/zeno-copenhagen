@@ -3,36 +3,76 @@
 public class Game : Microsoft.Xna.Framework.Game
 {
     private GraphicsDeviceManager _graphics;
-    private SpriteBatch _spriteBatch;
-
-    Texture2D ballTexture;
-    Vector2 ballPosition;
-    float ballSpeed;
+    private Application _application = default!;
+    private IServiceProvider _services = default!;
 
     public Game()
     {
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
-        Services.Initialise();
+        var serviceCollection = new ServiceCollection();
+        serviceCollection.Initialise(_graphics, Content);
+        _services = serviceCollection.BuildServiceProvider();
     }
 
     protected override void Initialize()
     {
-        // TODO: Add your initialization logic here
-        ballPosition = new Vector2(_graphics.PreferredBackBufferWidth / 2,
-        _graphics.PreferredBackBufferHeight / 2);
-        ballSpeed = 100f;
+        _application = _services.GetRequiredService<Application>();
 
         base.Initialize();
+
+        _application.SetScene(_services.GetRequiredService<GameScene>());
+
+        SeedData(
+            _services.GetRequiredService<IGameCommandService>(),
+            _services.GetRequiredService<IGameData>(),
+            _services.GetRequiredService<IPrototypeService<ShuttlePrototype, Shuttle>>());
+    }
+
+    private void SeedData(
+        IGameCommandService gameCommandService,
+        IGameData data,
+        IPrototypeService<ShuttlePrototype, Shuttle> shuttlePrototypeService)
+    {
+        const int MAX_WIDTH = 5;
+        const int MAX_HEIGHT = 4;
+        for (int y = 0; y < MAX_HEIGHT; ++y)
+        {
+            gameCommandService.Execute<DigShaftCommand>(new(new()));
+        }
+
+        for (int y = 0; y <= MAX_HEIGHT; ++y)
+        {
+            for (int x = 1; x <= MAX_WIDTH; ++x)
+            {
+                gameCommandService.Execute<DigTileCommand>(new(new() { Level = y, Column = -x }));
+                gameCommandService.Execute<DigTileCommand>(new(new() { Level = y, Column = +x }));
+            }
+        }
+
+        {   //  Shuttle prototypes
+
+            var prototype = new ShuttlePrototype
+            {
+                Id = StringHash.Hash("Shuttle_Basic"),
+                Name = "Shuttle_Basic",
+                TextureName = "SHUTTLE_BASIC",
+                Capacity = 25,
+                LoadingTime = 5.0f,
+                IdleTime = 25.0f,
+                Speed = 4.0f * ResourceConstants.CellSize
+            };
+
+            shuttlePrototypeService.RegisterPrototype(prototype.Id, prototype);
+        }
+
+        gameCommandService.Execute<CreateShuttleCommand>(new(new("Shuttle_Basic")));
     }
 
     protected override void LoadContent()
     {
-        _spriteBatch = new SpriteBatch(GraphicsDevice);
-
-        // TODO: use this.Content to load your game content here
-        ballTexture = Content.Load<Texture2D>("Textures/ball");
+        _application.LoadContent(_graphics, Content);
     }
 
     protected override void Update(GameTime gameTime)
@@ -43,25 +83,7 @@ public class Game : Microsoft.Xna.Framework.Game
         // TODO: Add your update logic here
         var kstate = Keyboard.GetState();
 
-        if (kstate.IsKeyDown(Keys.Up))
-        {
-            ballPosition.Y -= ballSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-        }
-
-        if (kstate.IsKeyDown(Keys.Down))
-        {
-            ballPosition.Y += ballSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-        }
-
-        if (kstate.IsKeyDown(Keys.Left))
-        {
-            ballPosition.X -= ballSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-        }
-
-        if (kstate.IsKeyDown(Keys.Right))
-        {
-            ballPosition.X += ballSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-        }
+        _application.Update(gameTime.ElapsedGameTime);
 
         base.Update(gameTime);
     }
@@ -70,20 +92,7 @@ public class Game : Microsoft.Xna.Framework.Game
     {
         GraphicsDevice.Clear(Color.CornflowerBlue);
 
-        // TODO: Add your drawing code here
-        _spriteBatch.Begin();
-        _spriteBatch.Draw(
-            ballTexture,
-            ballPosition,
-            null,
-            Color.White,
-            0f,
-            new Vector2(ballTexture.Width / 2, ballTexture.Height / 2),
-            Vector2.One,
-            SpriteEffects.None,
-            0f
-        );
-        _spriteBatch.End();
+        _application.Draw(gameTime.ElapsedGameTime);
 
         base.Draw(gameTime);
     }

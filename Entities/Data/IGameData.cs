@@ -2,5 +2,6 @@
 
 public interface IGameData
 {
-    public TerrainData Terrain { get; }
+    TerrainData Terrain { get; }
+    ShuttleData Shuttle { get; }
 }

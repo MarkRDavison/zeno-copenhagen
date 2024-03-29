@@ -3,4 +3,5 @@
 public class GameData : IGameData
 {
     public TerrainData Terrain { get; } = new();
+    public ShuttleData Shuttle { get; } = new();
 }
