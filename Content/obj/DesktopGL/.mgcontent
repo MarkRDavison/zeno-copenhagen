@@ -4,10 +4,12 @@
   <Platform>DesktopGL</Platform>
   <Config />
   <SourceFiles>
+    <File>F:/Workspace/Github/zeno-copenhagen/Content/Fonts/File.spritefont</File>
     <File>F:/Workspace/Github/zeno-copenhagen/Content/Textures/ball.png</File>
     <File>F:/Workspace/Github/zeno-copenhagen/Content/Textures/tile_sprite_sheet.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
   </DestFiles>

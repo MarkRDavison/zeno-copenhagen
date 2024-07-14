@@ -1,6 +1,6 @@
 ﻿namespace zeno_copenhagen.Resource;
 
-public class SpriteSheetService : ISpriteSheetService
+public sealed class SpriteSheetService : ISpriteSheetService
 {
     private readonly IDictionary<string, SpriteInfo> _spriteInfo;
 

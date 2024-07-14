@@ -27,8 +27,8 @@ public abstract class BaseView : IView
 
     }
 
-    public abstract void Draw(TimeSpan delta, Matrix camera);
     public abstract void Update(TimeSpan delta);
+    public abstract void Draw(TimeSpan delta, Matrix camera);
 
     protected void DrawTileAlignedSpriteCell(SpriteBatch batch, string spriteName, Vector2 cellOrigin)
     {

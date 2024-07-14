@@ -1,6 +1,6 @@
 ﻿namespace zeno_copenhagen.Commands.DigTile;
 
-public class DigTileCommandHandler : IGameCommandHandler<DigTileCommand>
+public sealed class DigTileCommandHandler : IGameCommandHandler<DigTileCommand>
 {
     private readonly IGameData _gameData;
 

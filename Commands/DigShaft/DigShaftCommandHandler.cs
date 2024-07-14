@@ -1,6 +1,6 @@
 ﻿namespace zeno_copenhagen.Commands.DigShaft;
 
-public class DigShaftCommandHandler : IGameCommandHandler<DigShaftCommand>
+public sealed class DigShaftCommandHandler : IGameCommandHandler<DigShaftCommand>
 {
     private readonly IGameData _gameData;
 

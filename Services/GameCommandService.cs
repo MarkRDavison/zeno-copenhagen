@@ -1,6 +1,6 @@
 ﻿namespace zeno_copenhagen.Services;
 
-public class GameCommandService : IGameCommandService
+public sealed class GameCommandService : IGameCommandService
 {
     private readonly IServiceProvider _services;
 

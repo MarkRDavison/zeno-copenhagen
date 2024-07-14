@@ -1,6 +1,6 @@
 ﻿namespace zeno_copenhagen.Prototypes;
 
-public class ShuttlePrototypeService : PrototypeService<ShuttlePrototype, Shuttle>
+public sealed class ShuttlePrototypeService : PrototypeService<ShuttlePrototype, Shuttle>
 {
     public override Shuttle CreateEntity(ShuttlePrototype prototype)
     {

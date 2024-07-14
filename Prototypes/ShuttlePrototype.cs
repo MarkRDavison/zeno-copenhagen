@@ -1,6 +1,6 @@
 ﻿namespace zeno_copenhagen.Prototypes;
 
-public class ShuttlePrototype : IPrototype
+public sealed class ShuttlePrototype : IPrototype
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = string.Empty;

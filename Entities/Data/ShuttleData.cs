@@ -1,6 +1,6 @@
 ﻿namespace zeno_copenhagen.Entities.Data;
 
-public class ShuttleData
+public sealed class ShuttleData
 {
-    public List<Shuttle> Shuttles { get; } = new();
+    public List<Shuttle> Shuttles { get; } = [];
 }

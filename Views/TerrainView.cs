@@ -1,6 +1,6 @@
 ﻿namespace zeno_copenhagen.Views;
 
-public class TerrainView : BaseView
+public sealed class TerrainView : BaseView
 {
     private SpriteBatch _spriteBatch;
     private readonly IGameData _gameData;

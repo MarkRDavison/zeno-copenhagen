@@ -9,20 +9,27 @@ public static class DependencyInjectionExtensions
         services.AddSingleton<GraphicsDeviceManager>(graphicsDeviceManager);
         services.AddSingleton<ContentManager>(content);
         services.AddSingleton<IResourceService, ResourceService>();
-        services.AddSingleton<IGameCommandService, GameCommandService>();
         services.AddSingleton<ISpriteSheetService, SpriteSheetService>();
 
         services.AddTransient<GameScene>();
         services.AddTransient<TerrainView>();
         services.AddTransient<ShuttleView>();
+        services.AddTransient<BuildingView>();
+        services.AddTransient<UiView>();
+
+        services.AddSingleton<IGameCommandService, GameCommandService>();
 
         services.AddTransient<IGameCommandHandler<DigTileCommand>, DigTileCommandHandler>();
         services.AddTransient<IGameCommandHandler<DigShaftCommand>, DigShaftCommandHandler>();
         services.AddTransient<IGameCommandHandler<CreateShuttleCommand>, CreateShuttleCommandHandler>();
+        services.AddTransient<IGameCommandHandler<PlaceBuildingCommand>, PlaceBuildingCommandHandler>();
 
         services.AddSingleton<IPrototypeService<ShuttlePrototype, Shuttle>, ShuttlePrototypeService>();
+        services.AddSingleton<IPrototypeService<BuildingPrototype, Building>, BuildingPrototypeService>();
 
         services.AddSingleton<IShuttleScheduleService, ShuttleScheduleService>();
+        services.AddSingleton<IWorkerCapacityService, WorkerCapacityService>();
+        services.AddSingleton<IBuildingPlacementService, BuildingPlacementService>();
 
         return services;
     }

@@ -1,6 +1,6 @@
 ﻿namespace zeno_copenhagen.Commands.CreateShuttle;
 
-public class CreateShuttleCommand : IGameCommand
+public sealed class CreateShuttleCommand : IGameCommand
 {
     public CreateShuttleCommand(string prototypeName) : this(StringHash.Hash(prototypeName))
     {

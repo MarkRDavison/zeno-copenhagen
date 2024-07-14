@@ -1,6 +1,6 @@
 ﻿namespace zeno_copenhagen.Views;
 
-public class ShuttleView : BaseView
+public sealed class ShuttleView : BaseView
 {
     private SpriteBatch _spriteBatch;
     private readonly IGameData _gameData;

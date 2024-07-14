@@ -1,16 +1,22 @@
 ﻿namespace zeno_copenhagen.Resource;
 
-public class ResourceService : IResourceService
+public sealed class ResourceService : IResourceService, IDisposable
 {
     private readonly GraphicsDeviceManager _graphicsDeviceManager;
-    private readonly IDictionary<string, IDictionary<string, IDisposable>> _resources;
+    private readonly ContentManager _contentManager;
+    private readonly IDictionary<string, IDictionary<string, object>> _resources;
+    private bool disposedValue;
 
-    public ResourceService(GraphicsDeviceManager graphicsDeviceManager)
+    public ResourceService(
+        GraphicsDeviceManager graphicsDeviceManager,
+        ContentManager contentManager)
     {
         _graphicsDeviceManager = graphicsDeviceManager;
-        _resources = new Dictionary<string, IDictionary<string, IDisposable>>
+        _contentManager = contentManager;
+        _resources = new Dictionary<string, IDictionary<string, object>>
         {
-            { nameof(Texture2D), new Dictionary<string, IDisposable>() }
+            { nameof(Texture2D), new Dictionary<string, object>() },
+            { nameof(SpriteFont), new Dictionary<string, object>() }
         };
     }
 
@@ -47,5 +53,65 @@ public class ResourceService : IResourceService
         }
 
         return null;
+    }
+
+    public void AddSpriteFont(string name, string path)
+    {
+        AddSpriteFont(name, _contentManager.Load<SpriteFont>(path));
+    }
+
+    public void AddSpriteFont(string name, SpriteFont font)
+    {
+        var fonts = _resources[nameof(SpriteFont)];
+        if (fonts.ContainsKey(name))
+        {
+            fonts[name] = font;
+        }
+        else
+        {
+            fonts.Add(name, font);
+        }
+    }
+
+    public SpriteFont? GetSpriteFont(string name)
+    {
+        var fonts = _resources[nameof(SpriteFont)];
+
+        if (fonts.TryGetValue(name, out var resource) && resource is SpriteFont font)
+        {
+            return font;
+        }
+
+        return null;
+    }
+
+    public void Dispose(bool disposing)
+    {
+        if (!disposedValue)
+        {
+            if (disposing)
+            {
+                foreach (var (_, resources) in _resources)
+                {
+                    foreach (var (_, res) in resources)
+                    {
+                        if (res is IDisposable disRes)
+                        {
+                            disRes.Dispose();
+                        }
+                    }
+                }
+
+                _resources.Clear();
+            }
+
+            disposedValue = true;
+        }
+    }
+
+    public void Dispose()
+    {
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
     }
 }

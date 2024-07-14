@@ -1,4 +1,5 @@
 Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
+"F:/Workspace/Github/zeno-copenhagen/Content/Fonts/File.spritefont","F:/Workspace/Github/zeno-copenhagen/Content/bin/DesktopGL/Fonts/File.xnb","FontDescriptionProcessor","SpriteFontContent",2068,21535,0.1575616
 "F:/Workspace/Github/zeno-copenhagen/Content/Scripts/Base/initializeCommands.lua","F:\Workspace\Github\zeno-copenhagen\Content\bin\DesktopGL\Scripts/Base/initializeCommands.lua","CopyItem","File",1059,1059,0.0009513
 "F:/Workspace/Github/zeno-copenhagen/Content/Scripts/Base/prototypes.lua","F:\Workspace\Github\zeno-copenhagen\Content\bin\DesktopGL\Scripts/Base/prototypes.lua","CopyItem","File",4804,4804,0.0004586
 "F:/Workspace/Github/zeno-copenhagen/Content/Scripts/Base/resources.lua","F:\Workspace\Github\zeno-copenhagen\Content\bin\DesktopGL\Scripts/Base/resources.lua","CopyItem","File",143,143,0.0003601

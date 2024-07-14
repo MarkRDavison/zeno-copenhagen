@@ -1,6 +1,6 @@
 ﻿namespace zeno_copenhagen.Commands.CreateShuttle;
 
-public class CreateShuttleCommandHandler : IGameCommandHandler<CreateShuttleCommand>
+public sealed class CreateShuttleCommandHandler : IGameCommandHandler<CreateShuttleCommand>
 {
     private readonly IGameData _gameData;
 

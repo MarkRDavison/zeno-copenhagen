@@ -1,6 +1,6 @@
 ﻿namespace zeno_copenhagen.Services.Shuttles;
 
-public class ShuttleScheduleService : IShuttleScheduleService
+public sealed class ShuttleScheduleService : IShuttleScheduleService
 {
     private readonly IGameData _gameData;
     private readonly IPrototypeService<ShuttlePrototype, Shuttle> _shuttlePrototypeService;

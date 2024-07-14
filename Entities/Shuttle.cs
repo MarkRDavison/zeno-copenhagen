@@ -9,7 +9,7 @@ public enum ShuttleState
     Complete
 }
 
-public class Shuttle : IEntity
+public sealed class Shuttle : IEntity
 {
     public Guid Id { get; set; }
     public Guid PrototypeId { get; set; }
