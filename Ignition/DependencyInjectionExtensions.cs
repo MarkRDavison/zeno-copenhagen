@@ -10,11 +10,16 @@ public static class DependencyInjectionExtensions
         services.AddSingleton<ContentManager>(content);
         services.AddSingleton<IResourceService, ResourceService>();
         services.AddSingleton<ISpriteSheetService, SpriteSheetService>();
+        services.AddSingleton<IInputActionManager, InputActionManager>();
+        services.AddSingleton<IInputManager, InputManager>();
+        services.AddSingleton<IGameCamera, GameCamera>();
 
         services.AddTransient<GameScene>();
         services.AddTransient<TerrainView>();
         services.AddTransient<ShuttleView>();
         services.AddTransient<BuildingView>();
+        services.AddTransient<JobView>();
+        services.AddTransient<WorkerView>();
         services.AddTransient<UiView>();
 
         services.AddSingleton<IGameCommandService, GameCommandService>();
@@ -26,10 +31,16 @@ public static class DependencyInjectionExtensions
 
         services.AddSingleton<IPrototypeService<ShuttlePrototype, Shuttle>, ShuttlePrototypeService>();
         services.AddSingleton<IPrototypeService<BuildingPrototype, Building>, BuildingPrototypeService>();
+        services.AddSingleton<IPrototypeService<JobPrototype, Job>, JobPrototypeService>();
+        services.AddSingleton<IPrototypeService<WorkerPrototype, Worker>, WorkerPrototypeService>();
 
         services.AddSingleton<IShuttleScheduleService, ShuttleScheduleService>();
-        services.AddSingleton<IWorkerCapacityService, WorkerCapacityService>();
+        services.AddSingleton<IWorkerRecruitementService, WorkerRecruitementService>();
         services.AddSingleton<IBuildingPlacementService, BuildingPlacementService>();
+        services.AddSingleton<IJobCreationService, JobCreationService>();
+        services.AddSingleton<IWorkerCreationService, WorkerCreationService>();
+        services.AddSingleton<IJobAllocationService, JobAllocationService>();
+        services.AddSingleton<IWorkerMovementService, WorkerMovementService>();
 
         return services;
     }

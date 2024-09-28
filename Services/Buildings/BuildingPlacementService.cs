@@ -4,15 +4,22 @@ public sealed class BuildingPlacementService : IBuildingPlacementService
 {
     private readonly IGameData _gameData;
     private readonly IPrototypeService<BuildingPrototype, Building> _buildingPrototypeService;
+    private readonly IJobCreationService _jobCreationService;
+    private readonly IWorkerRecruitementService _workerRecruitementService;
+
     public BuildingPlacementService(
         IGameData gameData,
-        IPrototypeService<BuildingPrototype, Building> buildingPrototypeService)
+        IPrototypeService<BuildingPrototype, Building> buildingPrototypeService,
+        IJobCreationService jobCreationService,
+        IWorkerRecruitementService workerRecruitementService)
     {
         _gameData = gameData;
         _buildingPrototypeService = buildingPrototypeService;
+        _jobCreationService = jobCreationService;
+        _workerRecruitementService = workerRecruitementService;
     }
 
-    public bool CanPlaceBuilding(Guid prototypeId, Vector2 position)
+    public bool CanPlacePrototype(Guid prototypeId, Vector2 position)
     {
         if (!_buildingPrototypeService.IsPrototypeRegistered(prototypeId))
         {
@@ -32,6 +39,37 @@ public sealed class BuildingPlacementService : IBuildingPlacementService
                     return false;
                 }
             }
+        }
+
+        return true;
+    }
+
+    public bool PlacePrototype(Guid prototypeId, Vector2 position)
+    {
+        if (!CanPlacePrototype(prototypeId, position))
+        {
+            return false;
+        }
+
+        var prototype = _buildingPrototypeService.GetPrototype(prototypeId);
+
+        var building = _buildingPrototypeService.CreateEntity(prototypeId);
+
+        building.Position = position;
+
+        _gameData.Building.Buildings.Add(building);
+
+        foreach (var (name, offset) in prototype.ProvidedJobs)
+        {
+            if (!_jobCreationService.CreateJob(StringHash.Hash(name), offset, position))
+            {
+                Debug.WriteLine("Failed to create {0} job when creating {1}", name, prototype.Name);
+            }
+        }
+
+        foreach (var (name, amount) in prototype.RequiredWorkers)
+        {
+            _workerRecruitementService.IncreaseWorkerRequirement(StringHash.Hash(name), amount);
         }
 
         return true;

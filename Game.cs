@@ -40,26 +40,17 @@ public sealed class Game : Microsoft.Xna.Framework.Game
             gameCommandService,
             _services.GetRequiredService<IGameData>(),
             _services.GetRequiredService<IPrototypeService<ShuttlePrototype, Shuttle>>(),
-            _services.GetRequiredService<IPrototypeService<BuildingPrototype, Building>>());
+            _services.GetRequiredService<IPrototypeService<BuildingPrototype, Building>>(),
+            _services.GetRequiredService<IPrototypeService<JobPrototype, Job>>(),
+            _services.GetRequiredService<IPrototypeService<WorkerPrototype, Worker>>());
 
         IntializeMap(gameCommandService);
     }
 
-    private void IntializeMap(IGameCommandService gameCommandService)
-    {
-        gameCommandService.Execute<CreateShuttleCommand>(new(new("Shuttle_Basic")));
-        gameCommandService.Execute<PlaceBuildingCommand>(new(new(new Vector2(1, 0), "Building_Bunk")));
-        gameCommandService.Execute<PlaceBuildingCommand>(new(new(new Vector2(3, 0), "Building_Hut")));
-    }
-
-    private void SeedData(
-        IGameCommandService gameCommandService,
-        IGameData data,
-        IPrototypeService<ShuttlePrototype, Shuttle> shuttlePrototypeService,
-        IPrototypeService<BuildingPrototype, Building> buildingPrototypeService)
+    private static void IntializeMap(IGameCommandService gameCommandService)
     {
         const int MAX_WIDTH = 5;
-        const int MAX_HEIGHT = 4;
+        const int MAX_HEIGHT = 1;
         for (int y = 0; y < MAX_HEIGHT; ++y)
         {
             gameCommandService.Execute<DigShaftCommand>(new(new()));
@@ -74,6 +65,21 @@ public sealed class Game : Microsoft.Xna.Framework.Game
             }
         }
 
+        gameCommandService.Execute<CreateShuttleCommand>(new(new("Shuttle_Basic")));
+        gameCommandService.Execute<PlaceBuildingCommand>(new(new(new Vector2(1, 0), "Building_Bunk")));
+        gameCommandService.Execute<PlaceBuildingCommand>(new(new(new Vector2(3, 0), "Building_Hut")));
+        gameCommandService.Execute<PlaceBuildingCommand>(new(new(new Vector2(1, 1), "Building_Miner")));
+    }
+
+    private void SeedData(
+        IGameCommandService gameCommandService,
+        IGameData data,
+        IPrototypeService<ShuttlePrototype, Shuttle> shuttlePrototypeService,
+        IPrototypeService<BuildingPrototype, Building> buildingPrototypeService,
+        IPrototypeService<JobPrototype, Job> jobPrototypeService,
+        IPrototypeService<WorkerPrototype, Worker> workerPrototypeService)
+    {
+
         {   //  Shuttle prototypes
             var prototype = new ShuttlePrototype
             {
@@ -87,6 +93,18 @@ public sealed class Game : Microsoft.Xna.Framework.Game
             };
 
             shuttlePrototypeService.RegisterPrototype(prototype.Id, prototype);
+        }
+
+        {   // Job prototypes
+            jobPrototypeService.RegisterPrototype(
+                StringHash.Hash("Job_Mine"),
+                new JobPrototype
+                {
+                    Id = StringHash.Hash("Job_Mine"),
+                    Name = "Job_Mine",
+                    Repeats = true,
+                    Work = 5.0f
+                });
         }
 
         {   // Building prototypes
@@ -115,7 +133,31 @@ public sealed class Game : Microsoft.Xna.Framework.Game
                     Id = StringHash.Hash("Building_Miner"),
                     Name = "Building_Miner",
                     TextureName = "BUILDING_MINER",
-                    Size = new Vector2(3, 1)
+                    Size = new Vector2(3, 1),
+                    ProvidedJobs =
+                    {
+                        new ProvidedJob("Job_Mine", new Vector2(1.0f, 0.0f))
+                    },
+                    RequiredWorkers =
+                    {
+                        new RequiredWorker("Worker_Miner", 1)
+                    }
+                });
+        }
+
+        {   // Worker prototypes
+            workerPrototypeService.RegisterPrototype(
+                StringHash.Hash("Worker_Miner"),
+                new WorkerPrototype
+                {
+                    Id = StringHash.Hash("Worker_Miner"),
+                    Name = "Worker_Miner",
+                    TextureName = "WORKER",
+                    Speed = 2.0f,
+                    Jobs =
+                    {
+                        "Job_Mine"
+                    }
                 });
         }
     }
@@ -127,15 +169,13 @@ public sealed class Game : Microsoft.Xna.Framework.Game
 
     protected override void Update(GameTime gameTime)
     {
-        if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-            Exit();
-
-        // TODO: Add your update logic here
-        var kstate = Keyboard.GetState();
+        var inputManager = _services.GetRequiredService<IInputManager>();
 
         _application.Update(gameTime.ElapsedGameTime);
 
         base.Update(gameTime);
+
+        inputManager.CacheInputs();
     }
 
     protected override void Draw(GameTime gameTime)

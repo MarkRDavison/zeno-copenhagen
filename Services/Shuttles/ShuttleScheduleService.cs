@@ -4,13 +4,19 @@ public sealed class ShuttleScheduleService : IShuttleScheduleService
 {
     private readonly IGameData _gameData;
     private readonly IPrototypeService<ShuttlePrototype, Shuttle> _shuttlePrototypeService;
+    private readonly IWorkerRecruitementService _workerRecruitementService;
+    private readonly IWorkerCreationService _workerCreationService;
 
     public ShuttleScheduleService(
         IGameData gameData,
-        IPrototypeService<ShuttlePrototype, Shuttle> shuttlePrototypeService)
+        IPrototypeService<ShuttlePrototype, Shuttle> shuttlePrototypeService,
+        IWorkerRecruitementService workerRecruitementService,
+        IWorkerCreationService workerCreationService)
     {
         _gameData = gameData;
         _shuttlePrototypeService = shuttlePrototypeService;
+        _workerRecruitementService = workerRecruitementService;
+        _workerCreationService = workerCreationService;
     }
 
     public void Update(TimeSpan delta)
@@ -81,7 +87,25 @@ public sealed class ShuttleScheduleService : IShuttleScheduleService
             return;
         }
 
-        // TODO: Look at workers required and create them
+        RecruitWorkers(shuttle);
+    }
+
+    private void RecruitWorkers(Shuttle shuttle)
+    {
+        foreach (var requiredWorkerPrototypeId in _workerRecruitementService.GetRequiredWorkers())
+        {
+            var requiredAmount = _workerRecruitementService.GetWorkerRequirement(requiredWorkerPrototypeId);
+            _workerRecruitementService.ReduceWorkerRequirement(requiredWorkerPrototypeId, requiredAmount);
+            for (var i = 0; i < requiredAmount; ++i)
+            {
+                if (!_workerCreationService.CreateWorker(
+                    requiredWorkerPrototypeId,
+                    shuttle.SurfacePosition / ResourceConstants.CellSize - new Vector2(0, 1)))
+                {
+                    _workerRecruitementService.IncreaseWorkerRequirement(requiredWorkerPrototypeId, 1);
+                }
+            }
+        }
     }
 
     private void HandleWaitingOnSurfaceShuttle(Shuttle shuttle, ShuttlePrototype prototype)

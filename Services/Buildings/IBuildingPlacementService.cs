@@ -2,5 +2,6 @@
 
 public interface IBuildingPlacementService
 {
-    bool CanPlaceBuilding(Guid prototypeId, Vector2 position);
+    bool CanPlacePrototype(Guid prototypeId, Vector2 position);
+    bool PlacePrototype(Guid prototypeId, Vector2 position);
 }
