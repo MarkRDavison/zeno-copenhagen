@@ -30,6 +30,7 @@
             _spriteSheetService.RegisterSprite("LADDER", new Vector2(0, 1), new Vector2(1, 1));
             _spriteSheetService.RegisterSprite("LADDER_DRILL", new Vector2(0, 2), new Vector2(1, 1));
             _spriteSheetService.RegisterSprite("SHUTTLE_BASIC", new Vector2(0, 5), new Vector2(3, 2));
+            _spriteSheetService.RegisterSprite("BUTTON", new Vector2(3, 5), new Vector2(3, 1));
             _spriteSheetService.RegisterSprite("BUILDING_BUNK", new Vector2(3, 0), new Vector2(2, 1));
             _spriteSheetService.RegisterSprite("BUILDING_HUT", new Vector2(5, 0), new Vector2(2, 1));
             _spriteSheetService.RegisterSprite("BUILDING_MINER", new Vector2(7, 0), new Vector2(3, 1));

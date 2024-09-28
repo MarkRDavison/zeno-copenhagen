@@ -1,4 +1,6 @@
-﻿namespace zeno_copenhagen.Views;
+﻿using zeno_copenhagen.Ui;
+
+namespace zeno_copenhagen.Views;
 
 public sealed class UiView : BaseView
 {
@@ -9,6 +11,8 @@ public sealed class UiView : BaseView
     private readonly IGameInteractionService _gameInteractionService;
     private SpriteBatch _spriteBatch;
 
+    private readonly List<UiComponent> _uiComponents = [];
+
     public UiView(
         IGameData gameData,
         IResourceService resourceService,
@@ -16,7 +20,8 @@ public sealed class UiView : BaseView
         IInputActionManager inputActionManager,
         IGameCamera camera,
         IGameResourceService gameResourceService,
-        IGameInteractionService gameInteractionService) : base(
+        IGameInteractionService gameInteractionService,
+        IServiceProvider services) : base(
         resourceService,
         spriteSheetService)
     {
@@ -26,6 +31,37 @@ public sealed class UiView : BaseView
         _spriteBatch = _resourceService.CreateSpriteBatch();
         _gameResourceService = gameResourceService;
         _gameInteractionService = gameInteractionService;
+
+        // TODO: UiConstraints
+        AddButton(services, "DIG", "Dig", Color.LightGray, Color.Magenta, new Vector2(16, -16));
+        AddButton(services, "BUILD", "Build", Color.LightGray, Color.Magenta, new Vector2(16 + 1 * 192, -16));
+        AddButton(services, "TECH", "Technology", Color.LightGray, Color.Magenta, new Vector2(16 + 2 * 192, -16));
+    }
+
+    private void AddButton(
+        IServiceProvider services,
+        string id,
+        string label,
+        Color color,
+        Color hoverColor,
+        Vector2 position)
+    {
+
+        _uiComponents.Add(
+            new UiButton(
+                services.GetRequiredService<IResourceService>(),
+                services.GetRequiredService<ISpriteSheetService>(),
+                services.GetRequiredService<IGameCamera>(),
+                services.GetRequiredService<IInputActionManager>(),
+                services.GetRequiredService<GraphicsDeviceManager>())
+            {
+                Color = color,
+                HoverColor = hoverColor,
+                Position = position,
+                Label = label,
+                Id = id,
+                OnClick = _ => Debug.WriteLine($"Button {_} is clicked.")
+            });
     }
 
     public override void Update(TimeSpan delta)
@@ -40,6 +76,11 @@ public sealed class UiView : BaseView
             {
                 Debug.WriteLine("No tile");
             }
+        }
+
+        foreach (var component in _uiComponents)
+        {
+            component.Update(delta);
         }
     }
 
@@ -115,5 +156,18 @@ public sealed class UiView : BaseView
         }
 
         _spriteBatch.End();
+
+
+        if (_uiComponents.Any())
+        {
+            _spriteBatch.Begin(transformMatrix: Matrix.Identity);
+
+            foreach (var component in _uiComponents)
+            {
+                component.Draw(_spriteBatch);
+            }
+
+            _spriteBatch.End();
+        }
     }
 }

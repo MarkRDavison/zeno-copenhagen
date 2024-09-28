@@ -5,6 +5,11 @@ VisualStudioVersion = 17.9.34616.47
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "zeno_copenhagen", "zeno_copenhagen.csproj", "{892D6E41-236D-46FD-B80F-ABAAB58F778B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Misc", "Misc", "{14E0EAA1-8D83-4217-B903-BB9FEC599DB6}"
+	ProjectSection(SolutionItems) = preProject
+		Todo.md = Todo.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
