@@ -139,7 +139,11 @@ public sealed class Game : Microsoft.Xna.Framework.Game
                     Id = StringHash.Hash("Building_Hut"),
                     Name = "Building_Hut",
                     TextureName = "BUILDING_HUT",
-                    Size = new Vector2(2, 1)
+                    Size = new Vector2(2, 1),
+                    RequiredWorkers =
+                    {
+                        new RequiredWorker("Worker_Builder", 1)
+                    }
                 });
 
             buildingPrototypeService.RegisterPrototype(
@@ -169,10 +173,23 @@ public sealed class Game : Microsoft.Xna.Framework.Game
                     Id = StringHash.Hash("Worker_Miner"),
                     Name = "Worker_Miner",
                     TextureName = "WORKER",
-                    Speed = 2.0f,
+                    Speed = 1.4f,
                     Jobs =
                     {
                         "Job_Mine"
+                    }
+                });
+
+            workerPrototypeService.RegisterPrototype(
+                StringHash.Hash("Worker_Builder"),
+                new WorkerPrototype
+                {
+                    Id = StringHash.Hash("Worker_Builder"),
+                    Name = "Worker_Builder",
+                    TextureName = "BUILDER",
+                    Speed = 2.0f,
+                    Jobs =
+                    {
                     }
                 });
         }

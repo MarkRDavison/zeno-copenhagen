@@ -34,6 +34,7 @@
             _spriteSheetService.RegisterSprite("BUILDING_HUT", new Vector2(5, 0), new Vector2(2, 1));
             _spriteSheetService.RegisterSprite("BUILDING_MINER", new Vector2(7, 0), new Vector2(3, 1));
             _spriteSheetService.RegisterSprite("WORKER", new Vector2(0, 3), new Vector2(1, 1));
+            _spriteSheetService.RegisterSprite("BUILDER", new Vector2(1, 3), new Vector2(1, 1));
             _spriteSheetService.RegisterSprite("JOB_CIRCLE", new Vector2(1, 2), new Vector2(1, 1));
         }
 
