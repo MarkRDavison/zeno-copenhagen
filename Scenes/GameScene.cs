@@ -12,7 +12,7 @@ public sealed class GameScene : IScene
     private readonly IJobAllocationService _jobAllocationService;
     private readonly IJobCleanupService _jobCleanupService;
     private readonly IWorkerMovementService _workerMovementService;
-
+    private readonly IGameInteractionService _gameInteractionService;
     public GameScene(
         TerrainView terrainView,
         ShuttleView shuttleView,
@@ -23,7 +23,8 @@ public sealed class GameScene : IScene
         IShuttleScheduleService shuttleScheduleService,
         IJobAllocationService jobAllocationService,
         IJobCleanupService jobCleanupService,
-        IWorkerMovementService workerMovementService)
+        IWorkerMovementService workerMovementService,
+        IGameInteractionService gameInteractionService)
     {
         _terrainView = terrainView;
         _shuttleView = shuttleView;
@@ -35,6 +36,7 @@ public sealed class GameScene : IScene
         _jobAllocationService = jobAllocationService;
         _jobCleanupService = jobCleanupService;
         _workerMovementService = workerMovementService;
+        _gameInteractionService = gameInteractionService;
     }
 
     public void Initialise()
@@ -52,6 +54,8 @@ public sealed class GameScene : IScene
         _shuttleScheduleService.Update(delta);
         _jobAllocationService.AllocateJobs(10);
         _workerMovementService.Update(delta);
+
+        _gameInteractionService.Update(delta);
 
         _jobCleanupService.Cleanup();
 
@@ -71,7 +75,7 @@ public sealed class GameScene : IScene
         _buildingView.Draw(delta, camera);
         _jobView.Draw(delta, camera);
         _workerView.Draw(delta, camera);
-        _uiView.Draw(delta, Matrix.Identity);
+        _uiView.Draw(delta, camera);
     }
 
 }

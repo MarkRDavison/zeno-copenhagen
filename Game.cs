@@ -1,6 +1,4 @@
-﻿using zeno_copenhagen.Commands.AddResource;
-
-namespace zeno_copenhagen;
+﻿namespace zeno_copenhagen;
 
 public sealed class Game : Microsoft.Xna.Framework.Game
 {
@@ -78,6 +76,7 @@ public sealed class Game : Microsoft.Xna.Framework.Game
         gameCommandService.Execute<PlaceBuildingCommand>(new(new(new Vector2(1, 1), "Building_Miner")));
 
         gameResourceService.SetResource("Resource_Gold", 300);
+        gameResourceService.SetResource("Resource_Ore", 0);
     }
 
     private static void SeedData(
@@ -115,7 +114,7 @@ public sealed class Game : Microsoft.Xna.Framework.Game
                     Work = 5.0f,
                     OnWorkComplete = (s, j) => s.GetRequiredService<IGameCommandService>().Execute<AddResourceCommand>(new(new() // TODO: new(new( do not like
                     {
-                        Name = "Resource_Gold",
+                        Name = "Resource_Ore",
                         Amount = 3 * int.Max(1, (int)j.TileCoords.Y)
                     }))
                 });
@@ -190,6 +189,7 @@ public sealed class Game : Microsoft.Xna.Framework.Game
                     Speed = 2.0f,
                     Jobs =
                     {
+
                     }
                 });
         }

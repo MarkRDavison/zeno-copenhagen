@@ -1,6 +1,4 @@
-﻿using zeno_copenhagen.Commands.AddResource;
-
-namespace zeno_copenhagen.Ignition;
+﻿namespace zeno_copenhagen.Ignition;
 
 public static class DependencyInjectionExtensions
 {
@@ -25,6 +23,7 @@ public static class DependencyInjectionExtensions
         services.AddTransient<UiView>();
 
         services.AddSingleton<IGameCommandService, GameCommandService>();
+        services.AddSingleton<IGameInteractionService, GameInteractionService>();
 
         services.AddTransient<IGameCommandHandler<DigTileCommand>, DigTileCommandHandler>();
         services.AddTransient<IGameCommandHandler<DigShaftCommand>, DigShaftCommandHandler>();

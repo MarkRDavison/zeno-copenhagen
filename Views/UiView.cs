@@ -1,6 +1,4 @@
-﻿using zeno_copenhagen.Services.Resources;
-
-namespace zeno_copenhagen.Views;
+﻿namespace zeno_copenhagen.Views;
 
 public sealed class UiView : BaseView
 {
@@ -8,6 +6,7 @@ public sealed class UiView : BaseView
     private readonly IInputActionManager _inputActionManager;
     private readonly IGameCamera _camera;
     private readonly IGameResourceService _gameResourceService;
+    private readonly IGameInteractionService _gameInteractionService;
     private SpriteBatch _spriteBatch;
 
     public UiView(
@@ -16,7 +15,8 @@ public sealed class UiView : BaseView
         ISpriteSheetService spriteSheetService,
         IInputActionManager inputActionManager,
         IGameCamera camera,
-        IGameResourceService gameResourceService) : base(
+        IGameResourceService gameResourceService,
+        IGameInteractionService gameInteractionService) : base(
         resourceService,
         spriteSheetService)
     {
@@ -25,6 +25,7 @@ public sealed class UiView : BaseView
         _camera = camera;
         _spriteBatch = _resourceService.CreateSpriteBatch();
         _gameResourceService = gameResourceService;
+        _gameInteractionService = gameInteractionService;
     }
 
     public override void Update(TimeSpan delta)
@@ -46,7 +47,7 @@ public sealed class UiView : BaseView
     {
         if (_resourceService.GetSpriteFont(ResourceConstants.DebugFontName) is { } font)
         {
-            _spriteBatch.Begin(transformMatrix: camera);
+            _spriteBatch.Begin(transformMatrix: Matrix.Identity);
             _spriteBatch.DrawString(
                 font,
                 $"Jobs: {_gameData.Job.Jobs.Count}",
@@ -87,7 +88,32 @@ public sealed class UiView : BaseView
                 1.0f,
                 SpriteEffects.None,
                 0.5f);
+            _spriteBatch.DrawString(
+                font,
+                $"Ore: {_gameResourceService.GetResource("Resource_Ore")}",
+                new Vector2(4, 80),
+                Color.Black,
+                0,
+                new Vector2(),
+                1.0f,
+                SpriteEffects.None,
+                0.5f);
             _spriteBatch.End();
         }
+
+        _spriteBatch.Begin(transformMatrix: camera);
+
+        if (_gameInteractionService.IsMouseOverDrill())
+        {
+            DrawTileAlignedSpriteCell(
+                _spriteBatch,
+                "LADDER_DRILL",
+                new Vector2(0, _gameData.Terrain.Rows.Count),
+                _gameInteractionService.CanDrillLevel()
+                    ? Color.LightGreen
+                    : Color.Red);
+        }
+
+        _spriteBatch.End();
     }
 }

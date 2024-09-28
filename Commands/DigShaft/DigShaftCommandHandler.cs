@@ -2,16 +2,30 @@
 
 public sealed class DigShaftCommandHandler : IGameCommandHandler<DigShaftCommand>
 {
-    private readonly IGameData _gameData;
+    const int ResourceCost = 100;
+    const string ResourceName = "Resource_Gold";
 
-    public DigShaftCommandHandler(IGameData gameData)
+    private readonly IGameData _gameData;
+    private readonly IGameResourceService _gameResourceService;
+
+    public DigShaftCommandHandler(
+        IGameData gameData,
+        IGameResourceService gameResourceService)
     {
         _gameData = gameData;
+        _gameResourceService = gameResourceService;
     }
 
     public bool Handle(DigShaftCommand command)
     {
+        _gameResourceService.ReduceResource(ResourceName, ResourceCost);
         _gameData.Terrain.IncrementLevel();
         return true;
+    }
+
+
+    public bool CanHandle(DigShaftCommand command)
+    {
+        return _gameResourceService.GetResource(ResourceName) >= ResourceCost;
     }
 }

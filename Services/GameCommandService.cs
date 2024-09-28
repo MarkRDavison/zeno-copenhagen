@@ -16,4 +16,12 @@ public sealed class GameCommandService : IGameCommandService
 
         return handler.Handle(command.Command);
     }
+
+    public bool CanExecute<TCommand>(GameCommand<TCommand> command)
+        where TCommand : class, IGameCommand
+    {
+        var handler = _services.GetRequiredService<IGameCommandHandler<TCommand>>();
+
+        return handler.CanHandle(command.Command);
+    }
 }

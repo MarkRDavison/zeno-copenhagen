@@ -88,6 +88,12 @@ public sealed class ShuttleScheduleService : IShuttleScheduleService
         }
 
         RecruitWorkers(shuttle);
+        LoadCargo(shuttle);
+    }
+
+    private void LoadCargo(Shuttle shuttle)
+    {
+        Debug.WriteLine("TODO: ShuttleScheduleService.LoadCargo");
     }
 
     private void RecruitWorkers(Shuttle shuttle)

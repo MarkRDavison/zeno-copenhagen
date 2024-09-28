@@ -7,6 +7,7 @@ global using System;
 global using System.Collections.Generic;
 global using System.Diagnostics;
 global using System.Linq;
+global using zeno_copenhagen.Commands.AddResource;
 global using zeno_copenhagen.Commands.CreateShuttle;
 global using zeno_copenhagen.Commands.DigShaft;
 global using zeno_copenhagen.Commands.DigTile;
