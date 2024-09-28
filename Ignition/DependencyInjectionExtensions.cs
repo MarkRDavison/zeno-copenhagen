@@ -38,6 +38,7 @@ public static class DependencyInjectionExtensions
         services.AddSingleton<IWorkerRecruitementService, WorkerRecruitementService>();
         services.AddSingleton<IBuildingPlacementService, BuildingPlacementService>();
         services.AddSingleton<IJobCreationService, JobCreationService>();
+        services.AddSingleton<IJobCleanupService, JobCleanupService>();
         services.AddSingleton<IWorkerCreationService, WorkerCreationService>();
         services.AddSingleton<IJobAllocationService, JobAllocationService>();
         services.AddSingleton<IWorkerMovementService, WorkerMovementService>();

@@ -3,10 +3,14 @@
 public sealed class WorkerMovementService : IWorkerMovementService
 {
     private readonly IGameData _gameData;
+    private readonly IPrototypeService<JobPrototype, Job> _jobPrototypeService;
 
-    public WorkerMovementService(IGameData gameData)
+    public WorkerMovementService(
+        IGameData gameData,
+        IPrototypeService<JobPrototype, Job> jobPrototypeService)
     {
         _gameData = gameData;
+        _jobPrototypeService = jobPrototypeService;
     }
 
     public void Update(TimeSpan delta)
@@ -38,7 +42,41 @@ public sealed class WorkerMovementService : IWorkerMovementService
 
     private void UpdateWorkingJobWorker(Worker worker, TimeSpan delta)
     {
+        var (job, prototype) = GetJobWithPrototypeFromJobId(worker.AllocatedJobId);
 
+        if (job is null || prototype is null)
+        {
+            worker.State = WorkerState.Idle;
+            return;
+        }
+
+        job.WorkRemaining -= (float)delta.TotalSeconds;
+        if (job.WorkRemaining <= 0)
+        {
+            if (prototype.Repeats)
+            {
+                job.WorkRemaining += prototype.Work;
+            }
+            else
+            {
+                worker.AllocatedJobId = null;
+                job.AllocatedWorkerId = null;
+                job.Complete = true;
+            }
+
+            Debug.WriteLine($"Job completed: {prototype.Name}");
+        }
+    }
+
+    private (Job? Job, JobPrototype? JobPrototype) GetJobWithPrototypeFromJobId(Guid? jobId)
+    {
+        if (_gameData.Job.GetJobById(jobId) is { } job &&
+            _jobPrototypeService.GetPrototype(job.PrototypeId) is { } prototype)
+        {
+            return (job, prototype);
+        }
+
+        return (null, null);
     }
 
     private (bool ReachedTarget, TimeSpan RemainingDelta) MoveTowardsTarget(float speed, TimeSpan delta, Worker worker, Vector2 target)
@@ -82,6 +120,12 @@ public sealed class WorkerMovementService : IWorkerMovementService
         if (reachedTarget && worker.Position == worker.Target)
         {
             worker.State = WorkerState.WorkingJob;
+
+            var (job, prototype) = GetJobWithPrototypeFromJobId(worker.AllocatedJobId);
+            if (job is not null && prototype is not null)
+            {
+                job.WorkRemaining = prototype.Work;
+            }
         }
 
         if (remainingDelta > TimeSpan.Zero)
