@@ -1,4 +1,6 @@
-﻿namespace zeno_copenhagen.Ignition;
+﻿using zeno_copenhagen.Commands.AddResource;
+
+namespace zeno_copenhagen.Ignition;
 
 public static class DependencyInjectionExtensions
 {
@@ -28,11 +30,14 @@ public static class DependencyInjectionExtensions
         services.AddTransient<IGameCommandHandler<DigShaftCommand>, DigShaftCommandHandler>();
         services.AddTransient<IGameCommandHandler<CreateShuttleCommand>, CreateShuttleCommandHandler>();
         services.AddTransient<IGameCommandHandler<PlaceBuildingCommand>, PlaceBuildingCommandHandler>();
+        services.AddTransient<IGameCommandHandler<AddResourceCommand>, AddResourceCommandHandler>();
 
         services.AddSingleton<IPrototypeService<ShuttlePrototype, Shuttle>, ShuttlePrototypeService>();
         services.AddSingleton<IPrototypeService<BuildingPrototype, Building>, BuildingPrototypeService>();
         services.AddSingleton<IPrototypeService<JobPrototype, Job>, JobPrototypeService>();
         services.AddSingleton<IPrototypeService<WorkerPrototype, Worker>, WorkerPrototypeService>();
+
+        services.AddSingleton<IGameResourceService, GameResourceService>();
 
         services.AddSingleton<IShuttleScheduleService, ShuttleScheduleService>();
         services.AddSingleton<IWorkerRecruitementService, WorkerRecruitementService>();

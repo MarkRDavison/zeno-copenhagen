@@ -1,10 +1,13 @@
-﻿namespace zeno_copenhagen.Views;
+﻿using zeno_copenhagen.Services.Resources;
+
+namespace zeno_copenhagen.Views;
 
 public sealed class UiView : BaseView
 {
     private readonly IGameData _gameData;
     private readonly IInputActionManager _inputActionManager;
     private readonly IGameCamera _camera;
+    private readonly IGameResourceService _gameResourceService;
     private SpriteBatch _spriteBatch;
 
     public UiView(
@@ -12,8 +15,8 @@ public sealed class UiView : BaseView
         IResourceService resourceService,
         ISpriteSheetService spriteSheetService,
         IInputActionManager inputActionManager,
-        IGameCamera camera
-    ) : base(
+        IGameCamera camera,
+        IGameResourceService gameResourceService) : base(
         resourceService,
         spriteSheetService)
     {
@@ -21,6 +24,7 @@ public sealed class UiView : BaseView
         _inputActionManager = inputActionManager;
         _camera = camera;
         _spriteBatch = _resourceService.CreateSpriteBatch();
+        _gameResourceService = gameResourceService;
     }
 
     public override void Update(TimeSpan delta)
@@ -67,6 +71,16 @@ public sealed class UiView : BaseView
                 font,
                 $"Workers: {_gameData.Worker.Workers.Count}",
                 new Vector2(4, 40),
+                Color.Black,
+                0,
+                new Vector2(),
+                1.0f,
+                SpriteEffects.None,
+                0.5f);
+            _spriteBatch.DrawString(
+                font,
+                $"Gold: {_gameResourceService.GetResource("Resource_Gold")}",
+                new Vector2(4, 60),
                 Color.Black,
                 0,
                 new Vector2(),

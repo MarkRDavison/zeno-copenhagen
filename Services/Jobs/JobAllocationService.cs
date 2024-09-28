@@ -31,10 +31,13 @@ public sealed class JobAllocationService : IJobAllocationService
                     worker.AllocatedJobId = job.Id;
                     job.AllocatedWorkerId = worker.Id;
                     number--;
+
                     if (number <= 0)
                     {
                         return;
                     }
+
+                    break;
                 }
             }
         }

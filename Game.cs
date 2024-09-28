@@ -1,4 +1,6 @@
-﻿namespace zeno_copenhagen;
+﻿using zeno_copenhagen.Commands.AddResource;
+
+namespace zeno_copenhagen;
 
 public sealed class Game : Microsoft.Xna.Framework.Game
 {
@@ -44,13 +46,18 @@ public sealed class Game : Microsoft.Xna.Framework.Game
             _services.GetRequiredService<IPrototypeService<JobPrototype, Job>>(),
             _services.GetRequiredService<IPrototypeService<WorkerPrototype, Worker>>());
 
-        IntializeMap(gameCommandService);
+        IntializeMap(
+            gameCommandService,
+            _services.GetRequiredService<IGameResourceService>());
     }
 
-    private static void IntializeMap(IGameCommandService gameCommandService)
+    private static void IntializeMap(
+        IGameCommandService gameCommandService,
+        IGameResourceService gameResourceService)
     {
         const int MAX_WIDTH = 5;
         const int MAX_HEIGHT = 1;
+
         for (int y = 0; y < MAX_HEIGHT; ++y)
         {
             gameCommandService.Execute<DigShaftCommand>(new(new()));
@@ -69,9 +76,11 @@ public sealed class Game : Microsoft.Xna.Framework.Game
         gameCommandService.Execute<PlaceBuildingCommand>(new(new(new Vector2(1, 0), "Building_Bunk")));
         gameCommandService.Execute<PlaceBuildingCommand>(new(new(new Vector2(3, 0), "Building_Hut")));
         gameCommandService.Execute<PlaceBuildingCommand>(new(new(new Vector2(1, 1), "Building_Miner")));
+
+        gameResourceService.SetResource("Resource_Gold", 300);
     }
 
-    private void SeedData(
+    private static void SeedData(
         IGameCommandService gameCommandService,
         IGameData data,
         IPrototypeService<ShuttlePrototype, Shuttle> shuttlePrototypeService,
@@ -103,7 +112,12 @@ public sealed class Game : Microsoft.Xna.Framework.Game
                     Id = StringHash.Hash("Job_Mine"),
                     Name = "Job_Mine",
                     Repeats = true,
-                    Work = 5.0f
+                    Work = 5.0f,
+                    OnWorkComplete = (s, j) => s.GetRequiredService<IGameCommandService>().Execute<AddResourceCommand>(new(new() // TODO: new(new( do not like
+                    {
+                        Name = "Resource_Gold",
+                        Amount = 3 * int.Max(1, (int)j.TileCoords.Y)
+                    }))
                 });
         }
 
@@ -117,15 +131,17 @@ public sealed class Game : Microsoft.Xna.Framework.Game
                     TextureName = "BUILDING_BUNK",
                     Size = new Vector2(2, 1)
                 });
+
             buildingPrototypeService.RegisterPrototype(
                 StringHash.Hash("Building_Hut"),
                 new BuildingPrototype
                 {
                     Id = StringHash.Hash("Building_Hut"),
-                    Name = "BuildinBuilding_Hutg_Bunk",
+                    Name = "Building_Hut",
                     TextureName = "BUILDING_HUT",
                     Size = new Vector2(2, 1)
                 });
+
             buildingPrototypeService.RegisterPrototype(
                 StringHash.Hash("Building_Miner"),
                 new BuildingPrototype

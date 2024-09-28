@@ -6,4 +6,5 @@ public sealed class JobPrototype : IPrototype
     public string Name { get; set; } = string.Empty;
     public bool Repeats { get; set; }
     public float Work { get; set; }
+    public Action<IServiceProvider, Job>? OnWorkComplete { get; set; }
 }

@@ -22,6 +22,7 @@ global using zeno_copenhagen.Scenes;
 global using zeno_copenhagen.Services;
 global using zeno_copenhagen.Services.Buildings;
 global using zeno_copenhagen.Services.Jobs;
+global using zeno_copenhagen.Services.Resources;
 global using zeno_copenhagen.Services.Shuttles;
 global using zeno_copenhagen.Services.Workers;
 global using zeno_copenhagen.Views;

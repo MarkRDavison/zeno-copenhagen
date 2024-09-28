@@ -4,13 +4,16 @@ public sealed class WorkerMovementService : IWorkerMovementService
 {
     private readonly IGameData _gameData;
     private readonly IPrototypeService<JobPrototype, Job> _jobPrototypeService;
+    private readonly IServiceProvider _services;
 
     public WorkerMovementService(
         IGameData gameData,
-        IPrototypeService<JobPrototype, Job> jobPrototypeService)
+        IPrototypeService<JobPrototype, Job> jobPrototypeService,
+        IServiceProvider services)
     {
         _gameData = gameData;
         _jobPrototypeService = jobPrototypeService;
+        _services = services;
     }
 
     public void Update(TimeSpan delta)
@@ -64,7 +67,7 @@ public sealed class WorkerMovementService : IWorkerMovementService
                 job.Complete = true;
             }
 
-            Debug.WriteLine($"Job completed: {prototype.Name}");
+            prototype.OnWorkComplete?.Invoke(_services, job);
         }
     }
 
