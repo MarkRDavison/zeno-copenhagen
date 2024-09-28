@@ -56,6 +56,9 @@ public sealed class Game : Microsoft.Xna.Framework.Game
         const int MAX_WIDTH = 5;
         const int MAX_HEIGHT = 1;
 
+        // TODO: Shaft dig needs resources
+        gameResourceService.SetResource("Resource_Gold", 300);
+
         for (int y = 0; y < MAX_HEIGHT; ++y)
         {
             gameCommandService.Execute<DigShaftCommand>(new(new()));

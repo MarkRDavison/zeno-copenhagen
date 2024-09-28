@@ -18,9 +18,14 @@ public sealed class DigShaftCommandHandler : IGameCommandHandler<DigShaftCommand
 
     public bool Handle(DigShaftCommand command)
     {
-        _gameResourceService.ReduceResource(ResourceName, ResourceCost);
-        _gameData.Terrain.IncrementLevel();
-        return true;
+        if (CanHandle(command))
+        {
+            _gameResourceService.ReduceResource(ResourceName, ResourceCost);
+            _gameData.Terrain.IncrementLevel();
+            return true;
+        }
+
+        return false;
     }
 
 
