@@ -9,6 +9,7 @@ public class GameInteractionService : IGameInteractionService
     private readonly IGameResourceService _gameResourceService;
     private readonly IJobCreationService _jobCreationService;
     private readonly ITerrainModificationService _terrainModificationService;
+    private readonly IBuildingPlacementService _buildingPlacementService;
 
     public GameInteractionService(
         IGameData gameData,
@@ -17,7 +18,8 @@ public class GameInteractionService : IGameInteractionService
         IGameCommandService gameCommandService,
         IGameResourceService gameResourceService,
         IJobCreationService jobCreationService,
-        ITerrainModificationService terrainModificationService)
+        ITerrainModificationService terrainModificationService,
+        IBuildingPlacementService buildingPlacementService)
     {
         _gameData = gameData;
         _inputActionManager = inputActionManager;
@@ -26,10 +28,15 @@ public class GameInteractionService : IGameInteractionService
         _gameResourceService = gameResourceService;
         _jobCreationService = jobCreationService;
         _terrainModificationService = terrainModificationService;
+        _buildingPlacementService = buildingPlacementService;
     }
     public void Update(TimeSpan delta)
     {
-        if (_inputActionManager.IsActionInvoked("LCLICK"))
+        if (_inputActionManager.IsActionInvoked("CANCEL"))
+        {
+            State = UiState.Idle;
+        }
+        else if (_inputActionManager.IsActionInvoked("LCLICK"))
         {
             if (IsMouseOverDrill() && CanDrillLevel())
             {
@@ -79,6 +86,13 @@ public class GameInteractionService : IGameInteractionService
                     }
                 }
             }
+            else if (State == UiState.Build &&
+                !string.IsNullOrEmpty(ActiveBuilding) &&
+                _inputActionManager.GetTilePosition(_gameCamera) is { } position &&
+                _buildingPlacementService.CanPlacePrototype(StringHash.Hash(ActiveBuilding), position, false))
+            {
+                _jobCreationService.CreateJob(StringHash.Hash("Job_BuildBuilding"), StringHash.Hash(ActiveBuilding), new(), position); // TODO: Offset?
+            }
         }
     }
 
@@ -93,4 +107,5 @@ public class GameInteractionService : IGameInteractionService
     }
 
     public UiState State { get; set; }
+    public string ActiveBuilding { get; set; } = string.Empty;
 }

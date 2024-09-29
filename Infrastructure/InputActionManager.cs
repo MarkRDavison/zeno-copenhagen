@@ -4,7 +4,6 @@ public sealed class InputActionManager : InputManager, IInputActionManager
 {
     private readonly Dictionary<string, InputAction> _actions = [];
 
-
     public void RegisterAction(string name, InputAction action)
     {
         _actions.Add(name, action);
@@ -20,8 +19,17 @@ public sealed class InputActionManager : InputManager, IInputActionManager
             }
         }
 
-        if (!_actions.TryGetValue(name, out var action))
+        if (_actions.TryGetValue(name, out var action))
         {
+            if (action.Type == InputType.Key)
+            {
+                return IsKeyPressed(action.Key);
+            }
+            else if (action.Type == InputType.Mouse)
+            {
+                return IsButtonPressed(action.Button);
+            }
+
             return false;
         }
 

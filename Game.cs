@@ -47,6 +47,16 @@ public sealed class Game : Microsoft.Xna.Framework.Game
         IntializeMap(
             gameCommandService,
             _services.GetRequiredService<IGameResourceService>());
+
+        var inputActionManager = _services.GetRequiredService<IInputActionManager>();
+
+        {
+            inputActionManager.RegisterAction("CANCEL", new InputAction
+            {
+                Type = InputType.Key,
+                Key = Keys.Escape
+            });
+        }
     }
 
     private static void IntializeMap(
@@ -90,7 +100,6 @@ public sealed class Game : Microsoft.Xna.Framework.Game
         IPrototypeService<JobPrototype, Job> jobPrototypeService,
         IPrototypeService<WorkerPrototype, Worker> workerPrototypeService)
     {
-
         {   //  Shuttle prototypes
             var prototype = new ShuttlePrototype
             {
@@ -134,6 +143,27 @@ public sealed class Game : Microsoft.Xna.Framework.Game
                         Column = (int)j.TileCoords.X,
                         Level = (int)j.TileCoords.Y
                     }))
+                });
+            jobPrototypeService.RegisterPrototype(
+                StringHash.Hash("Job_BuildBuilding"),
+                new JobPrototype
+                {
+                    Id = StringHash.Hash("Job_BuildBuilding"),
+                    Name = "Job_BuildBuilding",
+                    Repeats = false,
+                    Work = _ => 5.0f,
+                    OnWorkComplete = (s, j) =>
+                    {
+                        if (j.RelatedPrototypeId is null)
+                        {
+                            Debug.WriteLine("Invalid related prototype id");
+                            return;
+                        }
+                        s.GetRequiredService<IGameCommandService>().Execute<PlaceBuildingCommand>(new(new(j.TileCoords, j.RelatedPrototypeId!.Value)
+                        {
+                            ClearJobReservations = true
+                        }));
+                    }
                 });
         }
 
@@ -206,7 +236,8 @@ public sealed class Game : Microsoft.Xna.Framework.Game
                     Speed = 2.0f,
                     Jobs =
                     {
-                        "Job_Dig"
+                        "Job_Dig",
+                        "Job_BuildBuilding"
                     }
                 });
         }

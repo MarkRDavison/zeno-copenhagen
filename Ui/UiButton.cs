@@ -27,6 +27,11 @@ public class UiButton : UiComponent
 
     public override void Update(TimeSpan delta)
     {
+        if (!IsVisible())
+        {
+            return;
+        }
+
         if (Disabled)
         {
             IsHovered = false;
@@ -76,6 +81,11 @@ public class UiButton : UiComponent
 
     public override void Draw(SpriteBatch spriteBatch)
     {
+        if (!IsVisible())
+        {
+            return;
+        }
+
         var spriteInfo = _spriteSheetService.GetSpriteInfo("BUTTON");
         if (!spriteInfo.Valid)
         {
@@ -131,6 +141,7 @@ public class UiButton : UiComponent
     public Color HoverColor { get; set; } = Color.Green;
     public bool IsHovered { get; private set; }
     public Func<bool> IsForceActive { get; set; } = () => false;
+    public Func<bool> IsVisible { get; set; } = () => true;
     public bool Disabled { get; set; }
     public Action<string>? OnClick { get; set; }
 }

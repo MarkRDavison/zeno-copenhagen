@@ -7,6 +7,8 @@ public sealed class UiView : BaseView
     private readonly IGameCamera _camera;
     private readonly IGameResourceService _gameResourceService;
     private readonly IGameInteractionService _gameInteractionService;
+    private readonly IPrototypeService<BuildingPrototype, Building> _buildingPrototypeService;
+    private readonly IBuildingPlacementService _buildingPlacementService;
     private SpriteBatch _spriteBatch;
 
     private readonly List<UiComponent> _uiComponents = [];
@@ -19,7 +21,9 @@ public sealed class UiView : BaseView
         IGameCamera camera,
         IGameResourceService gameResourceService,
         IGameInteractionService gameInteractionService,
-        IServiceProvider services) : base(
+        IServiceProvider services,
+        IPrototypeService<BuildingPrototype, Building> buildingPrototypeService,
+        IBuildingPlacementService buildingPlacementService) : base(
         resourceService,
         spriteSheetService)
     {
@@ -31,9 +35,15 @@ public sealed class UiView : BaseView
         _gameInteractionService = gameInteractionService;
 
         // TODO: UiConstraints
-        AddButton(services, "DIG", "Dig", Color.LightGray, Color.Magenta, new Vector2(16, -16), () => _gameInteractionService.State == UiState.Dig);
-        AddButton(services, "BUILD", "Build", Color.LightGray, Color.Magenta, new Vector2(16 + 1 * 192, -16), () => _gameInteractionService.State == UiState.Build);
-        AddButton(services, "TECH", "Technology", Color.LightGray, Color.Magenta, new Vector2(16 + 2 * 192, -16), () => _gameInteractionService.State == UiState.Tech);
+        AddButton(services, "DIG", "Dig", Color.LightGray, Color.Magenta, new Vector2(16, -16), () => _gameInteractionService.State == UiState.Dig, () => true);
+        AddButton(services, "BUILD", "Build", Color.LightGray, Color.Magenta, new Vector2(16 + 1 * 192, -16), () => _gameInteractionService.State == UiState.Build, () => true);
+        AddButton(services, "TECH", "Technology", Color.LightGray, Color.Magenta, new Vector2(16 + 2 * 192, -16), () => _gameInteractionService.State == UiState.Tech, () => true);
+
+        AddButton(services, "Building_Hut", "Builders hut", Color.LightGray, Color.Magenta, new Vector2(16, -16 - 64), () => _gameInteractionService.ActiveBuilding == "Building_Hut", () => _gameInteractionService.State == UiState.Build);
+        AddButton(services, "Building_Bunk", "Bunk", Color.LightGray, Color.Magenta, new Vector2(16 + 1 * 192, -16 - 64), () => _gameInteractionService.ActiveBuilding == "Building_Bunk", () => _gameInteractionService.State == UiState.Build);
+        AddButton(services, "Building_Miner", "Miner", Color.LightGray, Color.Magenta, new Vector2(16 + 2 * 192, -16 - 64), () => _gameInteractionService.ActiveBuilding == "Building_Miner", () => _gameInteractionService.State == UiState.Build);
+        _buildingPrototypeService = buildingPrototypeService;
+        _buildingPlacementService = buildingPlacementService;
     }
 
     private void AddButton(
@@ -43,9 +53,9 @@ public sealed class UiView : BaseView
         Color color,
         Color hoverColor,
         Vector2 position,
-        Func<bool> isForceActive)
+        Func<bool> isForceActive,
+        Func<bool> isVisible)
     {
-
         _uiComponents.Add(
             new UiButton(
                 services.GetRequiredService<IResourceService>(),
@@ -60,7 +70,8 @@ public sealed class UiView : BaseView
                 Label = label,
                 Id = id,
                 OnClick = OnButtonClicked,
-                IsForceActive = isForceActive
+                IsForceActive = isForceActive,
+                IsVisible = isVisible
             });
     }
 
@@ -85,6 +96,7 @@ public sealed class UiView : BaseView
                 }
                 else
                 {
+                    _gameInteractionService.ActiveBuilding = string.Empty;
                     _gameInteractionService.State = UiState.Build;
                 }
                 break;
@@ -98,6 +110,19 @@ public sealed class UiView : BaseView
                     _gameInteractionService.State = UiState.Tech;
                 }
                 break;
+            case "Building_Hut":
+            case "Building_Bunk":
+            case "Building_Miner":
+                if (_gameInteractionService.ActiveBuilding == id)
+                {
+                    _gameInteractionService.ActiveBuilding = string.Empty;
+                }
+                else
+                {
+                    _gameInteractionService.ActiveBuilding = id;
+                }
+
+                break;
             default:
                 Debug.WriteLine($"Unhandled ui button click: {id}");
                 break;
@@ -106,18 +131,6 @@ public sealed class UiView : BaseView
 
     public override void Update(TimeSpan delta)
     {
-        if (_inputActionManager.IsActionInvoked("LCLICK"))
-        {
-            if (_inputActionManager.GetTilePosition(_camera) is { } coords)
-            {
-                Debug.WriteLine($"Tile: {coords.X}, {coords.Y}");
-            }
-            else
-            {
-                Debug.WriteLine("No tile");
-            }
-        }
-
         foreach (var component in _uiComponents)
         {
             component.Update(delta);
@@ -193,6 +206,25 @@ public sealed class UiView : BaseView
                 _gameInteractionService.CanDrillLevel()
                     ? Color.LightGreen
                     : Color.Red);
+        }
+
+        if (_gameInteractionService.State == UiState.Build &&
+            !string.IsNullOrEmpty(_gameInteractionService.ActiveBuilding))
+        {
+            var prototype = _buildingPrototypeService.GetPrototype(StringHash.Hash(_gameInteractionService.ActiveBuilding));
+
+            if (_inputActionManager.GetTilePosition(_camera) is { } position)
+            {
+                var canPlace = _buildingPlacementService.CanPlacePrototype(StringHash.Hash(_gameInteractionService.ActiveBuilding), position, false);
+
+                DrawTileAlignedSpriteCell(
+                    _spriteBatch,
+                    prototype.TextureName,
+                    position,
+                    canPlace
+                        ? Color.LightGreen
+                        : Color.Red);
+            }
         }
 
         _spriteBatch.End();

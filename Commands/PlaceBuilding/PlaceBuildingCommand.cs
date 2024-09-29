@@ -18,4 +18,5 @@ public sealed class PlaceBuildingCommand : IGameCommand
 
     public Vector2 Position { get; }
     public Guid PrototypeId { get; }
+    public bool ClearJobReservations { get; set; }
 }

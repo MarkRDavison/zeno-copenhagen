@@ -17,4 +17,6 @@ public interface IGameInteractionService
     bool CanDrillLevel();
 
     UiState State { get; set; }
+
+    string ActiveBuilding { get; set; }
 }

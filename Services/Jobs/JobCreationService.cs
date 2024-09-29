@@ -16,6 +16,10 @@ public sealed class JobCreationService : IJobCreationService
 
     public bool CreateJob(Guid prototypeId, Vector2 offset, Vector2 coords)
     {
+        return CreateJob(prototypeId, Guid.Empty, offset, coords);
+    }
+    public bool CreateJob(Guid prototypeId, Guid relatedPrototypeId, Vector2 offset, Vector2 coords)
+    {
         if (!_jobPrototypeService.IsPrototypeRegistered(prototypeId))
         {
             return false;
@@ -30,6 +34,7 @@ public sealed class JobCreationService : IJobCreationService
         tile.JobReserved = true;
 
         var job = _jobPrototypeService.CreateEntity(prototypeId);
+        job.RelatedPrototypeId = relatedPrototypeId == Guid.Empty ? null : relatedPrototypeId;
         job.TileCoords = coords;
         job.Offset = offset;
 

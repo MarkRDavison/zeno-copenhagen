@@ -15,6 +15,6 @@ public sealed class PlaceBuildingCommandHandler : IGameCommandHandler<PlaceBuild
 
     public bool Handle(PlaceBuildingCommand command)
     {
-        return _buildingPlacementService.PlacePrototype(command.PrototypeId, command.Position);
+        return _buildingPlacementService.PlacePrototype(command.PrototypeId, command.Position, command.ClearJobReservations);
     }
 }

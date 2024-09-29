@@ -19,7 +19,7 @@ public sealed class BuildingPlacementService : IBuildingPlacementService
         _workerRecruitementService = workerRecruitementService;
     }
 
-    public bool CanPlacePrototype(Guid prototypeId, Vector2 position)
+    public bool CanPlacePrototype(Guid prototypeId, Vector2 position, bool clearJobReservations)
     {
         if (!_buildingPrototypeService.IsPrototypeRegistered(prototypeId))
         {
@@ -34,7 +34,7 @@ public sealed class BuildingPlacementService : IBuildingPlacementService
             {
                 var tile = _gameData.Terrain.GetTile((int)(y + position.Y), (int)(x + position.X));
 
-                if (tile is null || !tile.DugOut)
+                if (tile is null || !tile.DugOut || tile.HasBuilding || (!clearJobReservations && tile.JobReserved))
                 {
                     return false;
                 }
@@ -44,9 +44,9 @@ public sealed class BuildingPlacementService : IBuildingPlacementService
         return true;
     }
 
-    public bool PlacePrototype(Guid prototypeId, Vector2 position)
+    public bool PlacePrototype(Guid prototypeId, Vector2 position, bool clearJobReservations)
     {
-        if (!CanPlacePrototype(prototypeId, position))
+        if (!CanPlacePrototype(prototypeId, position, clearJobReservations))
         {
             return false;
         }
@@ -58,6 +58,16 @@ public sealed class BuildingPlacementService : IBuildingPlacementService
         building.Position = position;
 
         _gameData.Building.Buildings.Add(building);
+
+        for (var y = 0; y < prototype.Size.Y; ++y)
+        {
+            for (var x = 0; x < prototype.Size.X; ++x)
+            {
+                var tile = _gameData.Terrain.GetTile((int)(y + position.Y), (int)(x + position.X));
+                Debug.Assert(tile is not null);
+                tile.HasBuilding = true;
+            }
+        }
 
         foreach (var (name, offset) in prototype.ProvidedJobs)
         {

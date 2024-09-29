@@ -31,6 +31,7 @@ public sealed class JobView : BaseView
 
         foreach (var job in _gameData.Job.Jobs)
         {
+            // TODO: Draw better things, i.e. a job for placing a building 
             DrawTileAlignedSpriteCell(
                 _spriteBatch,
                 "JOB_CIRCLE",

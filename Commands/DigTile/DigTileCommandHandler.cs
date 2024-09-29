@@ -20,6 +20,7 @@ public sealed class DigTileCommandHandler : IGameCommandHandler<DigTileCommand>
         {
             tile.DugOut = true;
             tile.TileName = "EMPTY";/*TODO Constant for default*/
+            tile.JobReserved = false;
 
             return true;
         }
