@@ -114,11 +114,25 @@ public sealed class Game : Microsoft.Xna.Framework.Game
                     Id = StringHash.Hash("Job_Mine"),
                     Name = "Job_Mine",
                     Repeats = true,
-                    Work = 5.0f,
+                    Work = _ => 5.0f,
                     OnWorkComplete = (s, j) => s.GetRequiredService<IGameCommandService>().Execute<AddResourceCommand>(new(new() // TODO: new(new( do not like
                     {
                         Name = "Resource_Ore",
                         Amount = 3 * int.Max(1, (int)j.TileCoords.Y)
+                    }))
+                });
+            jobPrototypeService.RegisterPrototype(
+                StringHash.Hash("Job_Dig"),
+                new JobPrototype
+                {
+                    Id = StringHash.Hash("Job_Dig"),
+                    Name = "Job_Dig",
+                    Repeats = false,
+                    Work = _ => 2.0f * (_.Y + 1),
+                    OnWorkComplete = (s, j) => s.GetRequiredService<IGameCommandService>().Execute<DigTileCommand>(new(new()
+                    {
+                        Column = (int)j.TileCoords.X,
+                        Level = (int)j.TileCoords.Y
                     }))
                 });
         }
@@ -192,7 +206,7 @@ public sealed class Game : Microsoft.Xna.Framework.Game
                     Speed = 2.0f,
                     Jobs =
                     {
-
+                        "Job_Dig"
                     }
                 });
         }

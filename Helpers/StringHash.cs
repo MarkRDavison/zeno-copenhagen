@@ -11,6 +11,7 @@ public static class StringHash
         _md5 = MD5.Create();
     }
 
+    [DebuggerStepThrough]
     public static Guid Hash(string input)
     {
 

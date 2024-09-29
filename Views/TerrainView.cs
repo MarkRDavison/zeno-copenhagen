@@ -34,7 +34,7 @@ public sealed class TerrainView : BaseView
             }
             for (int leftX = 0; leftX < currentRow.LeftTiles.Count; ++leftX)
             {
-                var tile = currentRow.RightTiles[leftX];
+                var tile = currentRow.LeftTiles[leftX];
                 DrawTileAlignedSpriteCell(_spriteBatch, tile.TileName, new Vector2(-leftX - 1, level));
             }
         }

@@ -32,6 +32,15 @@ public class InputManager : IInputManager
         return !_prevKeyboardState.IsKeyDown(key) && _keyboardState.IsKeyDown(key);
     }
 
+    public void ListKeyState(Keys key)
+    {
+        var curr = _keyboardState.IsKeyDown(key);
+        var prev = _prevKeyboardState.IsKeyDown(key);
+        var force = Keyboard.GetState().IsKeyDown(key);
+
+        Debug.WriteLine($"{key.ToString()} - Curr: {curr} - Prev: {prev} - Force: {force}");
+    }
+
     public bool IsButtonPressed(MouseButton button)
     {
         return button switch

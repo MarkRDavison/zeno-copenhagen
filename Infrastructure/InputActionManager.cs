@@ -2,13 +2,8 @@
 
 public sealed class InputActionManager : InputManager, IInputActionManager
 {
-    private readonly IInputManager _inputManager;
     private readonly Dictionary<string, InputAction> _actions = [];
 
-    public InputActionManager(IInputManager inputManager)
-    {
-        _inputManager = inputManager;
-    }
 
     public void RegisterAction(string name, InputAction action)
     {
@@ -19,7 +14,7 @@ public sealed class InputActionManager : InputManager, IInputActionManager
     {
         if (name == "LCLICK")
         {
-            if (_inputManager.IsButtonPressed(MouseButton.Left))
+            if (IsButtonPressed(MouseButton.Left))
             {
                 return true;
             }

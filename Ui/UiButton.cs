@@ -27,6 +27,12 @@ public class UiButton : UiComponent
 
     public override void Update(TimeSpan delta)
     {
+        if (Disabled)
+        {
+            IsHovered = false;
+            return;
+        }
+
         var spriteInfo = _spriteSheetService.GetSpriteInfo("BUTTON");
 
         if (!spriteInfo.Valid)
@@ -90,7 +96,7 @@ public class UiButton : UiComponent
             (int)spriteInfo.Size.X * ResourceConstants.CellSize,
             (int)spriteInfo.Size.Y * ResourceConstants.CellSize);
 
-        spriteBatch.Draw(_spritesheetTexture, destination, source, (IsHovered || IsForceActive) ? HoverColor : Color);
+        spriteBatch.Draw(_spritesheetTexture, destination, source, GetColor());
 
         if (!string.IsNullOrEmpty(Label) &&
             _resourceService.GetSpriteFont(ResourceConstants.DebugFontName) is { } font)
@@ -104,16 +110,27 @@ public class UiButton : UiComponent
                 new Vector2((int)position.X, (int)position.Y) +
                 new Vector2((int)spriteInfo.Size.X * ResourceConstants.CellSize, (int)spriteInfo.Size.Y * ResourceConstants.CellSize) / 2 -
                 bounds / 2,
-                (IsHovered || IsForceActive) ? HoverColor : Color);
+                GetColor());
         }
     }
 
-    // TODO: Configureable size, so can take [ then 0-many _ then ]
+    private Color GetColor()
+    {
+        if (Disabled)
+        {
+            return Color.DarkGray;
+        }
+
+        return (IsHovered || IsForceActive()) ? HoverColor : Color;
+    }
+
+    // TODO: Configureable size, so can take [ then 0-many = then ]
 
     public string Id { get; set; } = string.Empty;
     public string Label { get; set; } = string.Empty;
     public Color HoverColor { get; set; } = Color.Green;
     public bool IsHovered { get; private set; }
-    public bool IsForceActive { get; set; }
+    public Func<bool> IsForceActive { get; set; } = () => false;
+    public bool Disabled { get; set; }
     public Action<string>? OnClick { get; set; }
 }

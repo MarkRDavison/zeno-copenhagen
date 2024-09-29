@@ -1,6 +1,4 @@
-﻿using zeno_copenhagen.Ui;
-
-namespace zeno_copenhagen.Views;
+﻿namespace zeno_copenhagen.Views;
 
 public sealed class UiView : BaseView
 {
@@ -33,9 +31,9 @@ public sealed class UiView : BaseView
         _gameInteractionService = gameInteractionService;
 
         // TODO: UiConstraints
-        AddButton(services, "DIG", "Dig", Color.LightGray, Color.Magenta, new Vector2(16, -16));
-        AddButton(services, "BUILD", "Build", Color.LightGray, Color.Magenta, new Vector2(16 + 1 * 192, -16));
-        AddButton(services, "TECH", "Technology", Color.LightGray, Color.Magenta, new Vector2(16 + 2 * 192, -16));
+        AddButton(services, "DIG", "Dig", Color.LightGray, Color.Magenta, new Vector2(16, -16), () => _gameInteractionService.State == UiState.Dig);
+        AddButton(services, "BUILD", "Build", Color.LightGray, Color.Magenta, new Vector2(16 + 1 * 192, -16), () => _gameInteractionService.State == UiState.Build);
+        AddButton(services, "TECH", "Technology", Color.LightGray, Color.Magenta, new Vector2(16 + 2 * 192, -16), () => _gameInteractionService.State == UiState.Tech);
     }
 
     private void AddButton(
@@ -44,7 +42,8 @@ public sealed class UiView : BaseView
         string label,
         Color color,
         Color hoverColor,
-        Vector2 position)
+        Vector2 position,
+        Func<bool> isForceActive)
     {
 
         _uiComponents.Add(
@@ -60,8 +59,49 @@ public sealed class UiView : BaseView
                 Position = position,
                 Label = label,
                 Id = id,
-                OnClick = _ => Debug.WriteLine($"Button {_} is clicked.")
+                OnClick = OnButtonClicked,
+                IsForceActive = isForceActive
             });
+    }
+
+    private void OnButtonClicked(string id)
+    {
+        switch (id)
+        {
+            case "DIG":
+                if (_gameInteractionService.State == UiState.Dig)
+                {
+                    _gameInteractionService.State = UiState.Idle;
+                }
+                else
+                {
+                    _gameInteractionService.State = UiState.Dig;
+                }
+                break;
+            case "BUILD":
+                if (_gameInteractionService.State == UiState.Build)
+                {
+                    _gameInteractionService.State = UiState.Idle;
+                }
+                else
+                {
+                    _gameInteractionService.State = UiState.Build;
+                }
+                break;
+            case "TECH":
+                if (_gameInteractionService.State == UiState.Tech)
+                {
+                    _gameInteractionService.State = UiState.Idle;
+                }
+                else
+                {
+                    _gameInteractionService.State = UiState.Tech;
+                }
+                break;
+            default:
+                Debug.WriteLine($"Unhandled ui button click: {id}");
+                break;
+        }
     }
 
     public override void Update(TimeSpan delta)

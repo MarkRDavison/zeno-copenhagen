@@ -58,11 +58,12 @@ public sealed class WorkerMovementService : IWorkerMovementService
         {
             if (prototype.Repeats)
             {
-                job.WorkRemaining += prototype.Work;
+                job.WorkRemaining += prototype.Work(job.TileCoords);
             }
             else
             {
                 worker.AllocatedJobId = null;
+                worker.State = WorkerState.Idle;
                 job.AllocatedWorkerId = null;
                 job.Complete = true;
             }
@@ -127,7 +128,7 @@ public sealed class WorkerMovementService : IWorkerMovementService
             var (job, prototype) = GetJobWithPrototypeFromJobId(worker.AllocatedJobId);
             if (job is not null && prototype is not null)
             {
-                job.WorkRemaining = prototype.Work;
+                job.WorkRemaining = prototype.Work(job.TileCoords);
             }
         }
 

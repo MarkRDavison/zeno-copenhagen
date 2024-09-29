@@ -11,7 +11,7 @@ public static class DependencyInjectionExtensions
         services.AddSingleton<IResourceService, ResourceService>();
         services.AddSingleton<ISpriteSheetService, SpriteSheetService>();
         services.AddSingleton<IInputActionManager, InputActionManager>();
-        services.AddSingleton<IInputManager, InputManager>();
+        services.AddSingleton<IInputManager>(_ => _.GetRequiredService<IInputActionManager>());
         services.AddSingleton<IGameCamera, GameCamera>();
 
         services.AddTransient<GameScene>();
@@ -38,6 +38,7 @@ public static class DependencyInjectionExtensions
 
         services.AddSingleton<IGameResourceService, GameResourceService>();
 
+        services.AddSingleton<ITerrainModificationService, TerrainModificationService>();
         services.AddSingleton<IShuttleScheduleService, ShuttleScheduleService>();
         services.AddSingleton<IWorkerRecruitementService, WorkerRecruitementService>();
         services.AddSingleton<IBuildingPlacementService, BuildingPlacementService>();

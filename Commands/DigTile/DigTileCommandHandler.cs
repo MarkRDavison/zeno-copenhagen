@@ -3,46 +3,27 @@
 public sealed class DigTileCommandHandler : IGameCommandHandler<DigTileCommand>
 {
     private readonly IGameData _gameData;
+    private readonly ITerrainModificationService _terrainModificationService;
 
-    public DigTileCommandHandler(IGameData gameData)
+    public DigTileCommandHandler(
+        IGameData gameData,
+        ITerrainModificationService terrainModificationService)
     {
         _gameData = gameData;
+        _terrainModificationService = terrainModificationService;
     }
 
     public bool Handle(DigTileCommand command)
     {
-        if (_gameData.Terrain.Level < command.Level)
+        if (_terrainModificationService.EnsureTilesExistIncluding(new Vector2(command.Column, command.Level)) &&
+            _gameData.Terrain.GetTile(command.Level, command.Column) is { } tile)
         {
-            return false;
+            tile.DugOut = true;
+            tile.TileName = "EMPTY";/*TODO Constant for default*/
+
+            return true;
         }
 
-        if (command.Column == 0)
-        {
-            return false;
-        }
-
-        var row = _gameData.Terrain.Rows[command.Level];
-
-        var x = Math.Abs(command.Column) - 1;
-
-        List<Tile> tiles;
-        if (command.Column > 0)
-        {
-            tiles = row.RightTiles;
-        }
-        else
-        {
-            tiles = row.LeftTiles;
-        }
-
-        while (tiles.Count <= x)
-        {
-            tiles.Add(new Tile { TileName = "DIRT" /*TODO Constant for default*/ });
-        }
-
-        tiles[x].DugOut = true;
-        tiles[x].TileName = "EMPTY";/*TODO Constant for default*/
-
-        return true;
+        return false;
     }
 }

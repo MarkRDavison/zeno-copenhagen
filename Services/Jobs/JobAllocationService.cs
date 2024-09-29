@@ -1,4 +1,5 @@
-﻿namespace zeno_copenhagen.Services.Jobs;
+﻿
+namespace zeno_copenhagen.Services.Jobs;
 
 public sealed class JobAllocationService : IJobAllocationService
 {
@@ -26,7 +27,7 @@ public sealed class JobAllocationService : IJobAllocationService
         {
             foreach (var worker in _gameData.Worker.Workers.Where(_ => _.AllocatedJobId is null))
             {
-                if (CanWorkerPerformJob(worker, job))
+                if (CanWorkerPerformJob(worker, job) && CanWorkerReachJob(worker, job))
                 {
                     worker.AllocatedJobId = job.Id;
                     job.AllocatedWorkerId = worker.Id;
@@ -41,6 +42,13 @@ public sealed class JobAllocationService : IJobAllocationService
                 }
             }
         }
+    }
+
+    private bool CanWorkerReachJob(Worker worker, Job job)
+    {
+        var workingPosition = job.TileCoords + job.Offset;
+
+        return _gameData.Terrain.CanReachPosition(workingPosition);
     }
 
     public bool CanWorkerPerformJob(Worker worker, Job job)
