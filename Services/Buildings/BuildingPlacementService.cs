@@ -66,6 +66,10 @@ public sealed class BuildingPlacementService : IBuildingPlacementService
                 var tile = _gameData.Terrain.GetTile((int)(y + position.Y), (int)(x + position.X));
                 Debug.Assert(tile is not null);
                 tile.HasBuilding = true;
+                if (clearJobReservations)
+                {
+                    tile.JobReserved = false;
+                }
             }
         }
 

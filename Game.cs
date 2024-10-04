@@ -84,6 +84,7 @@ public sealed class Game : Microsoft.Xna.Framework.Game
         }
 
         gameCommandService.Execute<CreateShuttleCommand>(new(new("Shuttle_Basic")));
+
         gameCommandService.Execute<PlaceBuildingCommand>(new(new(new Vector2(1, 0), "Building_Bunk")));
         gameCommandService.Execute<PlaceBuildingCommand>(new(new(new Vector2(3, 0), "Building_Hut")));
         gameCommandService.Execute<PlaceBuildingCommand>(new(new(new Vector2(1, 1), "Building_Miner")));
